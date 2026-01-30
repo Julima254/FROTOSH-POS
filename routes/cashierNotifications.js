@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { isCashier } = require("../middleware/auth"); // make sure you have a cashier auth middleware
-const Notification = require("../models/Notification");
+const Notification = require("../models/notification");
 
 // ============================
 // GET /cashier/notifications

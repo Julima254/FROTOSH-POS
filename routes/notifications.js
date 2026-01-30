@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { isAdmin } = require("../middleware/auth");
-const Notification = require("../models/Notification");
+const Notification = require("../models/notification");
 
 // ============================
 // GET /admin/notifications
