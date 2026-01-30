@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+    /* =========================
+   ROOT COLORS
+========================= */
+:root {
+    --navy: #0b1c2d;
+    --white: #ffffff;
+    --lightgray: #f2f4f7;
+    --text-dark: #1a1a1a;
+}
+
+/* =========================
+   RESET & BASE
+========================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--lightgray);
+    color: var(--text-dark);
+}
+
+/* =========================
+   MENU TOGGLE (MOBILE)
+========================= */
+.admin-menu-toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    font-size: 1.5rem;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* =========================
+   HEADER / NAV (MOBILE)
+========================= */
+.admin-header {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: 260px;
+    height: 100vh;
+    background: var(--navy);
+    color: var(--white);
+    transition: left 0.3s ease;
+    z-index: 1000;
+    padding-top: 20px;
+}
+
+.admin-header.open {
+    left: 0;
+}
+
+/* LOGO */
+.logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    max-width: 120px;
+}
+
+/* NAV */
+.admin-nav ul {
+    list-style: none;
+}
+
+.admin-nav li {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-nav a {
+    display: block;
+    padding: 14px 20px;
+    color: var(--white);
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.admin-nav a:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* =========================
+   LOGOUT BUTTON (GLOBAL)
+========================= */
+.logout-btn {
+    color: #ffdddd !important;
+    background: rgba(255, 0, 0, 0.15);
+    border-left: 4px solid #ff4d4d;
+    font-weight: 600;
+}
+
+/* Hover effect */
+.logout-btn:hover {
+    background: #ff4d4d;
+    color: #ffffff !important;
+}
+
+
+/* =========================
+   TABLET VIEW (≥768px)
+========================= */
+@media (min-width: 768px) {
+    .admin-header {
+        width: 280px;
+    }
+
+    .admin-nav a {
+        font-size: 1rem;
+    }
+}
+
+/* =========================
+   DESKTOP VIEW (≥1024px)
+========================= */
+@media (min-width: 1024px) {
+    /* Hide toggle button */
+    .admin-menu-toggle {
+        display: none;
+    }
+
+    /* Header becomes TOP NAV */
+    .admin-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 70px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        padding: 0 30px;
+        background: var(--navy);
+    }
+
+    .admin-header.open {
+        left: 0;
+    }
+
+    /* Logo */
+    .logo-container {
+        margin: 0;
+        margin-right: 40px;
+    }
+
+    .logo {
+        max-height: 45px;
+    }
+
+    /* NAV HORIZONTAL */
+    .admin-nav ul {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .admin-nav li {
+        border-bottom: none;
+    }
+
+    .admin-nav a {
+        padding: 10px 14px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+    }
+
+    .admin-nav a:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    @media (min-width: 1024px) {
+    .logout-btn {
+        background: #ff4d4d;
+        color: #ffffff !important;
+        padding: 10px 16px;
+        border-radius: 6px;
+        border-left: none;
+        margin-left: 15px;
+    }
+
+    .logout-btn:hover {
+        background: #e63b3b;
+    }
+}
+
+}
+
+</style>
+</head>
+<body>
+     <button class="admin-menu-toggle" aria-label="Toggle menu">
+    ☰
+    </button>
+    <header class="admin-header">
+    <div class="logo-container">
+        <a href="/admin/dashboard">
+            <img src="/images/logo.png" alt="Logo" class="logo">
+        </a>
+    </div>
+
+    <nav class="admin-nav">
+        <ul>
+           <li><a href="/cashier/sales">🏠 Dashboard</a></li>
+                <li><a href="/cashier/pos">🧾 POS System</a></li>
+                <li><a href="/cashier/transactions">🗂️ Transactions</a></li>
+                <li><a href="/cashier/notifications">🔔 Notifications</a></li>
+                <li><a href="/logout" class="logout-btn">🚪 Logout</a></li>
+        </ul>
+    </nav>
+</header>
+<script>
+    const toggleBtn = document.querySelector('.admin-menu-toggle');
+    const sidebar = document.querySelector('.admin-header');
+
+    toggleBtn.addEventListener('click', function () {
+        sidebar.classList.toggle('open');
+    });
+</script>
+</body>
+</html>

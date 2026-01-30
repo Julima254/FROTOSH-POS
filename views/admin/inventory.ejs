@@ -1,0 +1,391 @@
+<%- include('../partials/adminHeader.ejs'); -%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    /* =====================
+   GLOBAL RESET
+===================== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f2f4f7; /* light gray */
+  color: #1f2933;
+}
+
+/* =====================
+   INVENTORY PAGE WRAPPER
+===================== */
+.inventory-page {
+  padding: 1rem;
+  width: 100%;
+}
+
+/* =====================
+   HEADER
+===================== */
+.inventory-page header {
+  background: #ffffff;
+  padding: 1.2rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.inventory-page header h1 {
+  margin: 0;
+  color: #001f4d; /* navy */
+}
+
+.inventory-page header p {
+  margin: 0.4rem 0 1rem;
+  color: #6b7280;
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.header-actions a {
+  text-decoration: none;
+  background: #001f4d;
+  color: #ffffff;
+  padding: 0.5rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.header-actions a:hover {
+  background: #003366;
+}
+
+/* =====================
+   ALERTS
+===================== */
+.alerts {
+  background: #fff5f5;
+  border-left: 4px solid #dc2626;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.alerts h2 {
+  margin-top: 0;
+  color: #b91c1c;
+}
+
+.alerts ul {
+  padding-left: 1.2rem;
+  margin: 0;
+}
+
+/* =====================
+   FILTERS
+===================== */
+.inventory-filters {
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.inventory-filters form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.inventory-filters input,
+.inventory-filters select,
+.inventory-filters button {
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+}
+
+.inventory-filters button {
+  background: #001f4d;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+}
+
+/* =====================
+   INVENTORY TABLE
+===================== */
+.inventory-table {
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 10px;
+  overflow-x: auto;
+}
+
+.inventory-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.inventory-table th {
+  background: #001f4d;
+  color: #ffffff;
+  text-align: left;
+  padding: 0.6rem;
+  font-size: 0.85rem;
+}
+
+.inventory-table td {
+  padding: 0.6rem;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.85rem;
+}
+
+.inventory-table tr:hover {
+  background: #f9fafb;
+}
+
+.inventory-table a {
+  color: #001f4d;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.inventory-table button {
+  background: none;
+  border: none;
+  color: #dc2626;
+  cursor: pointer;
+}
+
+/* =====================
+   STOCK ADJUSTMENT
+===================== */
+.stock-adjustment {
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-top: 1.5rem;
+}
+
+.stock-adjustment h2 {
+  margin-top: 0;
+  color: #001f4d;
+}
+
+.stock-adjustment form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.stock-adjustment select,
+.stock-adjustment input,
+.stock-adjustment button {
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+}
+
+.stock-adjustment button {
+  background: #001f4d;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+}
+
+/* =====================
+   TABLET VIEW (≥ 768px)
+===================== */
+@media (min-width: 768px) {
+  .inventory-filters form {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .inventory-filters input,
+  .inventory-filters select {
+    flex: 1;
+  }
+
+  .stock-adjustment form {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .stock-adjustment select,
+  .stock-adjustment input {
+    flex: 1;
+  }
+}
+
+/* =====================
+   DESKTOP VIEW (≥ 1024px)
+===================== */
+@media (min-width: 1024px) {
+  .inventory-page {
+    margin-left: 0px; /* space for fixed sidebar */
+    padding: 2rem;
+  }
+
+  .header-actions {
+    justify-content: flex-end;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- PAGE WRAPPER -->
+  <div class="inventory-page">
+
+    <!-- HEADER -->
+    <header>
+      <h1>Inventory</h1>
+      <p>Manage your products and stock levels</p>
+
+      <div class="header-actions">
+        <a href="/admin/products/new">➕ Add Product</a>
+        <a href="/admin/categories">🗂 Manage Categories</a>
+      </div>
+    </header>
+
+    <!-- LOW STOCK ALERTS -->
+    <% if (alerts && alerts.length > 0) { %>
+      <section class="alerts">
+        <h2>⚠️ Low Stock Alerts</h2>
+        <ul>
+          <% alerts.forEach(item => { %>
+            <li>
+              <strong><%= item.name %></strong> —
+              <%= item.quantity %> left
+            </li>
+          <% }) %>
+        </ul>
+      </section>
+    <% } %>
+
+    <!-- FILTER & SEARCH -->
+    <section class="inventory-filters">
+      <form method="GET" action="/admin/inventory">
+        <input 
+          type="text" 
+          name="search" 
+          placeholder="Search product name or SKU"
+        />
+
+        <select name="category">
+          <option value="">All Categories</option>
+          <% categories.forEach(cat => { %>
+            <option value="<%= cat._id %>">
+              <%= cat.name %>
+            </option>
+          <% }) %>
+        </select>
+
+        <button type="submit">Filter</button>
+      </form>
+    </section>
+
+    <!-- INVENTORY TABLE -->
+    <section class="inventory-table">
+      <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Product</th>
+            <th>SKU</th>
+            <th>Category</th>
+            <th>Buying Price</th>
+            <th>Selling Price</th>
+            <th>Stock</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% if (products.length === 0) { %>
+            <tr>
+              <td colspan="9">No products found.</td>
+            </tr>
+          <% } %>
+
+          <% products.forEach((product, index) => { %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><%= product.name %></td>
+              <td><%= product.sku %></td>
+              <td><%= product.category?.name || 'Uncategorized' %></td>
+              <td><%= product.buyingPrice %> Ksh</td>
+              <td><%= product.sellingPrice %> Ksh</td>
+              <td><%= product.quantity %></td>
+              <td>
+                <% if (product.quantity === 0) { %>
+                  Out of Stock
+                <% } else if (product.quantity <= product.minStock) { %>
+                  Low Stock
+                <% } else { %>
+                  In Stock
+                <% } %>
+              </td>
+              <td>
+                <a href="/admin/products/<%= product._id %>/edit">✏️ Edit</a>
+                |
+                <form 
+                  action="/admin/products/<%= product._id %>?_method=DELETE" 
+                  method="POST" 
+                  style="display:inline"
+                >
+                  <button type="submit">🗑 Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- STOCK ADJUSTMENT -->
+    <section class="stock-adjustment">
+      <h2>📦 Stock Adjustment</h2>
+
+      <form method="POST" action="/admin/inventory/adjust">
+        <select name="productId" required>
+          <option value="">Select Product</option>
+          <% products.forEach(product => { %>
+            <option value="<%= product._id %>">
+              <%= product.name %>
+            </option>
+          <% }) %>
+        </select>
+
+        <input 
+          type="number" 
+          name="quantity" 
+          placeholder="Quantity (+ or -)" 
+          required
+        />
+
+        <select name="reason">
+          <option value="damage">Damaged</option>
+          <option value="restock">Restock</option>
+          <option value="return">Customer Return</option>
+          <option value="correction">Correction</option>
+        </select>
+
+        <button type="submit">Update Stock</button>
+      </form>
+    </section>
+
+  </div>
+
+</body>
+</html>

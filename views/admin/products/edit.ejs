@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* =========================
+   VARIABLES
+========================= */
+:root {
+  --navy: #0a1f44;
+  --light-gray: #f2f4f7;
+  --white: #ffffff;
+  --border: #dcdfe4;
+  --danger: #c0392b;
+}
+
+/* =========================
+   BASE / MOBILE FIRST
+========================= */
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--light-gray);
+}
+
+.product-edit-page {
+  padding: 1rem;
+}
+
+/* HEADER */
+.product-edit-page header {
+  background: var(--navy);
+  color: var(--white);
+  padding: 1.2rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.product-edit-page header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.product-edit-page header p {
+  margin: 0.4rem 0;
+  font-size: 0.9rem;
+}
+
+.product-edit-page header a {
+  display: inline-block;
+  margin-top: 0.6rem;
+  color: var(--white);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+/* ERROR MESSAGE */
+.error-message {
+  background: #fdecea;
+  color: var(--danger);
+  padding: 0.8rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+/* FORM */
+form {
+  background: var(--white);
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+fieldset {
+  border: 1px solid var(--border);
+  padding: 1rem;
+}
+
+legend {
+  padding: 0 0.5rem;
+  font-weight: bold;
+  color: var(--navy);
+}
+
+/* LABELS & INPUTS */
+label {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.6rem;
+  margin-top: 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* IMAGE */
+.current-image {
+  margin-bottom: 1rem;
+}
+
+.current-image img {
+  margin-top: 0.4rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+/* ACTIONS */
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.form-actions button {
+  background: var(--navy);
+  color: var(--white);
+  border: none;
+  padding: 0.7rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-actions a {
+  text-align: center;
+  padding: 0.7rem;
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--navy);
+  border-radius: 4px;
+}
+
+/* =========================
+   TABLET (≥ 768px)
+========================= */
+@media (min-width: 768px) {
+  .product-edit-page {
+    padding: 2rem;
+  }
+
+  fieldset {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  textarea,
+  select,
+  input[type="file"],
+  .current-image {
+    grid-column: span 2;
+  }
+
+  .form-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .form-actions button,
+  .form-actions a {
+    width: auto;
+    padding: 0.7rem 1.5rem;
+  }
+}
+
+/* =========================
+   DESKTOP (≥ 1024px)
+========================= */
+@media (min-width: 1024px) {
+  .product-edit-page {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  header {
+    border-radius: 8px;
+  }
+
+  form {
+    padding: 2rem;
+  }
+
+  legend {
+    font-size: 1rem;
+  }
+}
+
+    </style>
+</head>
+<body>
+    <div class="product-edit-page">
+
+  <!-- HEADER -->
+  <header>
+    <h1>Edit Product</h1>
+    <p>Update product information and inventory details</p>
+    <a href="/admin/inventory">⬅ Back to Inventory</a>
+  </header>
+
+  <!-- ERROR MESSAGE -->
+  <% if (error) { %>
+    <p class="error-message"><%= error %></p>
+  <% } %>
+
+  <!-- EDIT PRODUCT FORM -->
+  <form action="/admin/products/<%= product._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+
+    <fieldset>
+      <legend>Product Information</legend>
+
+      <label>
+        Product Name
+        <input type="text" name="name" value="<%= product.name %>" required>
+      </label>
+
+      <label>
+        SKU
+        <input type="text" name="sku" value="<%= product.sku %>" required>
+      </label>
+
+      <label>
+        Category
+        <select name="category">
+          <option value="">No Category</option>
+          <% categories.forEach(cat => { %>
+            <option value="<%= cat._id %>" <%= product.category && product.category.toString() === cat._id.toString() ? 'selected' : '' %>>
+              <%= cat.name %>
+            </option>
+          <% }) %>
+        </select>
+      </label>
+
+      <label>
+        Buying Price
+        <input type="number" name="buyingPrice" value="<%= product.buyingPrice %>" step="0.01" required>
+      </label>
+
+      <label>
+        Selling Price
+        <input type="number" name="sellingPrice" value="<%= product.sellingPrice %>" step="0.01" required>
+      </label>
+
+      <label>
+        Quantity
+        <input type="number" name="quantity" value="<%= product.quantity %>" required>
+      </label>
+
+      <label>
+        Minimum Stock
+        <input type="number" name="minStock" value="<%= product.minStock %>">
+      </label>
+
+      <label>
+        Description
+        <textarea name="description" rows="4"><%= product.description || '' %></textarea>
+      </label>
+
+      <!-- CURRENT IMAGE -->
+      <% if (product.image) { %>
+        <div class="current-image">
+          <p>Current Image:</p>
+          <img src="<%= product.image %>" alt="Product Image" width="120">
+        </div>
+      <% } %>
+
+      <label>
+        Replace Image (optional)
+        <input type="file" name="image" accept="image/*">
+      </label>
+
+    </fieldset>
+
+    <!-- ACTIONS -->
+    <div class="form-actions">
+      <button type="submit">💾 Update Product</button>
+      <a href="/admin/inventory">Cancel</a>
+    </div>
+
+  </form>
+
+</div>
+
+</body>
+</html>

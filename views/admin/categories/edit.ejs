@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* =========================
+   VARIABLES
+========================= */
+:root {
+  --navy: #0a1f44;
+  --navy-light: #122b5c;
+  --white: #ffffff;
+  --light-gray: #f2f4f7;
+  --border-gray: #dcdfe4;
+  --danger: #c0392b;
+}
+
+/* =========================
+   GLOBAL RESET
+========================= */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--light-gray);
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  color: var(--navy);
+}
+
+/* =========================
+   MOBILE FIRST
+========================= */
+.category-edit-page {
+  padding: 1rem;
+}
+
+/* HEADER */
+.category-edit-page header {
+  background: var(--navy);
+  color: var(--white);
+  padding: 1.2rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.category-edit-page header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.category-edit-page header p {
+  margin: 0.4rem 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.category-edit-page header a {
+  display: inline-block;
+  margin-top: 0.6rem;
+  color: var(--white);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+/* ERROR MESSAGE */
+.error-message {
+  background: #fdecea;
+  color: var(--danger);
+  padding: 0.8rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+/* FORM */
+.category-edit-page form {
+  background: var(--white);
+  padding: 1.2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* FIELDSET */
+.category-edit-page fieldset {
+  border: 1px solid var(--border-gray);
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.category-edit-page legend {
+  padding: 0 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* LABELS */
+.category-edit-page label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+/* INPUTS */
+.category-edit-page input,
+.category-edit-page textarea {
+  margin-top: 0.4rem;
+  padding: 0.6rem;
+  border-radius: 5px;
+  border: 1px solid var(--border-gray);
+  font-size: 0.9rem;
+}
+
+.category-edit-page input:focus,
+.category-edit-page textarea:focus {
+  outline: none;
+  border-color: var(--navy);
+}
+
+/* ACTION BUTTONS */
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.form-actions button {
+  background: var(--navy);
+  color: var(--white);
+  border: none;
+  padding: 0.7rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.form-actions button:hover {
+  background: var(--navy-light);
+}
+
+.form-actions a {
+  text-align: center;
+  padding: 0.6rem;
+  background: var(--light-gray);
+  color: var(--navy);
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+/* =========================
+   TABLET (≥ 768px)
+========================= */
+@media (min-width: 768px) {
+  .category-edit-page {
+    padding: 2rem;
+  }
+
+  .category-edit-page form {
+    max-width: 600px;
+    margin: auto;
+  }
+
+  .form-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .form-actions a {
+    width: auto;
+    padding: 0.7rem 1.2rem;
+  }
+
+  .form-actions button {
+    padding: 0.7rem 1.4rem;
+  }
+}
+
+/* =========================
+   DESKTOP (≥ 1024px)
+   Sidebar on left assumed
+========================= */
+@media (min-width: 1024px) {
+  .category-edit-page {
+    margin-left: 240px; /* space for permanent sidebar */
+    padding: 2.5rem;
+  }
+
+  .category-edit-page header {
+    max-width: 700px;
+  }
+
+  .category-edit-page form {
+    max-width: 700px;
+  }
+}
+
+    </style>
+</head>
+<body>
+    <div class="category-edit-page">
+
+  <!-- HEADER -->
+  <header>
+    <h1>Edit Category</h1>
+    <p>Update category information</p>
+    <a href="/admin/categories">⬅ Back to Categories</a>
+  </header>
+
+  <!-- ERROR -->
+  <% if (error) { %>
+    <p class="error-message"><%= error %></p>
+  <% } %>
+
+  <!-- FORM -->
+  <form action="/admin/categories/<%= category._id %>?_method=PUT" method="POST">
+
+    <fieldset>
+      <legend>Category Details</legend>
+
+      <label>
+        Category Name
+        <input
+          type="text"
+          name="name"
+          value="<%= category.name %>"
+          required
+        >
+      </label>
+
+      <label>
+        Description
+        <textarea name="description" rows="4"><%= category.description || '' %></textarea>
+      </label>
+
+    </fieldset>
+
+    <div class="form-actions">
+      <button type="submit">💾 Update Category</button>
+      <a href="/admin/categories">Cancel</a>
+    </div>
+
+  </form>
+
+</div>
+
+</body>
+</html>

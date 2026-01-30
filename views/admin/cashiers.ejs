@@ -1,0 +1,262 @@
+<%- include('../partials/adminHeader.ejs'); -%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<style>
+    /* ==========================
+   CASHIERS PAGE STYLING
+   Mobile-first
+========================== */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #001f4d;
+  margin: 0;
+  padding: 0;
+}
+
+.cashiers-page {
+  padding: 1rem;
+}
+
+/* HEADER */
+.cashiers-page header {
+  margin-bottom: 1.5rem;
+}
+
+.cashiers-page header h1 {
+  font-size: 1.8rem;
+  color: #001f4d;
+  margin-bottom: 0.3rem;
+}
+
+.cashiers-page header p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.header-actions {
+  margin-top: 0.5rem;
+}
+
+.header-actions a {
+  text-decoration: none;
+  color: white;
+  background-color: #001f4d;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: background 0.3s ease;
+}
+
+.header-actions a:hover {
+  background-color: #003366;
+}
+
+/* ERROR / SUCCESS MESSAGES */
+.error-message {
+  background-color: #f8d7da;
+  color: #842029;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+}
+
+.success-message {
+  background-color: #d1e7dd;
+  color: #0f5132;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+}
+
+/* TABLE */
+.cashiers-table {
+  overflow-x: auto;
+}
+
+.cashiers-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.cashiers-table th,
+.cashiers-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.9rem;
+}
+
+.cashiers-table th {
+  background-color: #001f4d;
+  color: white;
+}
+
+.cashiers-table tr:hover {
+  background-color: #f0f0f0;
+}
+
+.cashiers-table button {
+  background-color: #c82333;
+  color: white;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.3s ease;
+}
+
+.cashiers-table button:hover {
+  background-color: #a71d2a;
+}
+
+.cashiers-table a {
+  text-decoration: none;
+  color: #001f4d;
+  font-weight: bold;
+}
+
+.cashiers-table a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================
+   TABLET VIEW (min-width: 768px)
+========================== */
+@media screen and (min-width: 768px) {
+  .cashiers-page header h1 {
+    font-size: 2rem;
+  }
+
+  .cashiers-page header p {
+    font-size: 1.1rem;
+  }
+
+  .cashiers-table th,
+  .cashiers-table td {
+    font-size: 1rem;
+    padding: 1rem;
+  }
+}
+
+/* ==========================
+   DESKTOP VIEW (min-width: 1024px)
+========================== */
+@media screen and (min-width: 1024px) {
+  body {
+    display: flex;
+  }
+
+  /* SIDE MENU - fixed on left */
+  .admin-nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 220px;
+    height: 100vh;
+    background-color: #001f4d;
+    color: white;
+    padding: 1rem 0;
+  }
+
+  .cashiers-page {
+    margin-left: 240px; /* space for sidebar */
+    padding: 2rem;
+  }
+
+  .header-actions a {
+    font-size: 1rem;
+  }
+}
+
+</style>
+<body>
+<!-- PAGE WRAPPER -->
+<div class="cashiers-page">
+
+  <!-- HEADER -->
+  <header>
+    <h1>Cashiers</h1>
+    <p>Manage cashier accounts and activity</p>
+
+    <div class="header-actions">
+      <a href="/admin/cashiers/new">➕ Add New Cashier</a>
+    </div>
+  </header>
+
+  <!-- ERROR / SUCCESS MESSAGES -->
+  <% if (error) { %>
+    <p class="error-message"><%= error %></p>
+  <% } %>
+
+  <% if (success) { %>
+    <p class="success-message"><%= success %></p>
+  <% } %>
+
+  <!-- CASHIERS TABLE -->
+  <section class="cashiers-table">
+    <table border="1" cellpadding="8" cellspacing="0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Full Name</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th>Last Login</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% if (cashiers.length === 0) { %>
+          <tr>
+            <td colspan="7">No cashiers found.</td>
+          </tr>
+        <% } %>
+
+        <% cashiers.forEach((cashier, index) => { %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= cashier.name %></td>
+            <td><%= cashier.username %></td>
+            <td><%= cashier.email %></td>
+            <td>
+              <%= cashier.isActive ? 'Active' : 'Inactive' %>
+            </td>
+            <td>
+              <%= cashier.lastLogin 
+                ? cashier.lastLogin.toLocaleString() 
+                : 'Never' %>
+            </td>
+            <td>
+              <a href="/admin/cashiers/<%= cashier._id %>/edit">✏️ Edit</a>
+              |
+              <form
+                action="/admin/cashiers/<%= cashier._id %>?_method=DELETE"
+                method="POST"
+                style="display:inline"
+              >
+                <button type="submit">
+                  🗑 Delete
+                </button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+</body>
+</html>

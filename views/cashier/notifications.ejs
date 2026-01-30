@@ -1,0 +1,244 @@
+<%- include('../partials/cashierHeader.ejs'); -%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications</title>
+    <style>
+/* ===============================
+   VARIABLES
+================================ */
+:root {
+  --navy: #001f4d;
+  --navy-light: #003366;
+  --white: #ffffff;
+  --light-gray: #f5f5f5;
+  --border-gray: #dcdfe3;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 1rem;
+}
+
+/* ===============================
+   BASE / MOBILE FIRST
+================================ */
+.notifications-page {
+  padding: 1rem;
+  background-color: var(--light-gray);
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* HEADER */
+.notifications-page header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.notifications-page header h1 {
+  font-size: 1.5rem;
+  color: var(--navy);
+  margin-bottom: 0.25rem;
+}
+
+.notifications-page header p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* ACTIONS */
+.notification-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.notification-actions form button {
+  width: 100%;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--navy);
+  color: var(--white);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.notification-actions form button:hover {
+  background-color: var(--navy-light);
+}
+
+/* NOTIFICATIONS LIST */
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* INDIVIDUAL NOTIFICATION */
+.notification-item {
+  background-color: var(--white);
+  border-radius: 8px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-gray);
+}
+
+.notification-item.unread {
+  border-left: 5px solid var(--navy);
+  background-color: #e6ebf7;
+}
+
+.notification-item.read {
+  opacity: 0.8;
+}
+
+/* CONTENT */
+.notification-content h4 {
+  font-size: 1rem;
+  color: var(--navy);
+  margin-bottom: 0.2rem;
+}
+
+.notification-content p {
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.notification-content small {
+  font-size: 0.75rem;
+  color: #777;
+}
+
+/* INDIVIDUAL ACTION BUTTON */
+.notification-item .notification-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.notification-item .notification-actions form button {
+  background-color: transparent;
+  border: 1px solid var(--navy);
+  color: var(--navy);
+  padding: 0.3rem 0.6rem;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.notification-item .notification-actions form button:hover {
+  background-color: var(--navy);
+  color: var(--white);
+}
+
+/* ===============================
+   TABLET VIEW (≥ 768px)
+================================ */
+@media (min-width: 768px) {
+  .notification-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .notification-actions form button {
+    width: auto;
+    min-width: 160px;
+  }
+
+  .notification-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .notification-content {
+    flex: 1;
+  }
+}
+
+/* ===============================
+   DESKTOP VIEW (≥ 1024px)
+================================ */
+@media (min-width: 1024px) {
+  .notifications-page {
+    padding: 2rem 3rem;
+  }
+
+  .notification-item {
+    padding: 1rem;
+  }
+
+  .notification-content h4 {
+    font-size: 1.1rem;
+  }
+
+  .notification-content p {
+    font-size: 1rem;
+  }
+
+  .notification-item .notification-actions form button {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+</style>
+
+</head>
+<body>
+    <div class="notifications-page">
+
+      <!-- HEADER -->
+      <header>
+        <h1>Notifications</h1>
+        <p>System alerts, sales updates, and important activity</p>
+      </header>
+
+      <!-- ACTIONS -->
+      <section class="notification-actions">
+        <form action="/cashier/notifications/mark-all-read" method="POST">
+          <button type="submit">Mark All as Read</button>
+        </form>
+
+        <form action="/cashier/notifications/clear" method="POST" onsubmit="return confirm('Clear all notifications?')">
+          <button type="submit">Clear All</button>
+        </form>
+      </section>
+
+      <!-- NOTIFICATIONS LIST -->
+      <section class="notifications-list">
+        <% if (!notifications || notifications.length === 0) { %>
+          <p>No notifications available.</p>
+        <% } %>
+
+        <% notifications?.forEach(notification => { %>
+          <div class="notification-item <%= notification.isRead ? 'read' : 'unread' %>">
+            
+            <div class="notification-content">
+              <h4><%= notification.title %></h4>
+              <p><%= notification.message %></p>
+              <small><%= notification.createdAt ? new Date(notification.createdAt).toLocaleString() : '' %></small>
+            </div>
+
+            <div class="notification-actions">
+              <% if (!notification.isRead) { %>
+                <form action="/cashier/notifications/<%= notification._id %>/read" method="POST">
+                  <button type="submit">Mark as Read</button>
+                </form>
+              <% } %>
+            </div>
+
+          </div>
+        <% }) %>
+      </section>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+    /* ======================
+   RESET & GLOBAL
+====================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* ======================
+   HEADER / SIDEBAR
+====================== */
+.admin-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px; /* desktop sidebar width */
+  height: 100%;
+  background-color: #001f4d; /* navy blue */
+  color: white;
+  padding-top: 20px;
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
+
+/* Hamburger hidden on desktop */
+.admin-menu-toggle {
+  display: block;
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  font-size: 26px;
+  color: #001f4d;
+  background: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 1100;
+}
+
+/* Sidebar logo */
+.logo-container {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.logo-container .logo {
+  width: 120px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Sidebar navigation */
+.admin-nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+.admin-nav li {
+  margin: 15px 0;
+}
+
+.admin-nav li a {
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.admin-nav li a:hover {
+  background-color: #003366; /* darker navy */
+}
+
+/* =========================
+   LOGOUT BUTTON
+========================= */
+.logout-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.logout-btn {
+  text-decoration: none;
+  background: #c0392b;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  transition: background 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: #a93226;
+}
+
+/* Sidebar logout */
+.logout-item {
+  margin-top: auto;
+}
+
+.logout-item .logout-btn {
+  display: block;
+  text-align: center;
+  margin: 1rem;
+}
+
+
+/* ======================
+   MOBILE VIEW
+====================== */
+@media (max-width: 991px) {
+  .admin-header {
+    width: 250px;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translateX(-100%);
+  }
+
+  .admin-header.open {
+    transform: translateX(0);
+  }
+
+  .admin-menu-toggle {
+    display: block;
+  }
+
+  body {
+    padding-left: 0;
+  }
+}
+
+/* ======================
+   DESKTOP VIEW
+====================== */
+@media (min-width: 992px) {
+  .admin-header {
+    transform: translateX(0); /* always visible */
+  }
+
+  .admin-menu-toggle {
+    display: none;
+  }
+
+  body {
+    padding-left: 250px; /* leave space for sidebar */
+  }
+}
+
+/* ======================
+   MAIN CONTENT
+====================== */
+.main-content {
+  margin-left: 0; /* mobile default */
+  padding: 20px;
+}
+
+@media (min-width: 992px) {
+  .main-content {
+    margin-left: 250px; /* account for sidebar width */
+  }
+}
+
+/* ======================
+   ICONS SPACING
+====================== */
+.admin-nav li a span {
+  margin-right: 10px;
+}
+
+</style>
+</head>
+<body>
+     <button class="admin-menu-toggle" aria-label="Toggle menu">
+    ☰
+    </button>
+    <header class="admin-header">
+    <div class="logo-container">
+        <a href="/admin/dashboard">
+            <img src="/images/logo.png" alt="Logo" class="logo">
+        </a>
+    </div>
+
+    <nav class="admin-nav">
+        <ul>
+            <li><a href="/admin/dashboard">🏠Dashboard</a></li>
+            <li><a href="/admin/inventory">📦Inventory</a></li>
+            <li><a href="/admin/categories">🗂️Categories</a></li>
+            <li><a href="/admin/cashiers">👤Cashiers</a></li>
+            <li><a href="/admin/sales">💰Sales</a></li>
+            <li><a href="/admin/reports">📊Reports</a></li>
+            <li><a href="/admin/settings">⚙️Settings</a></li>
+            <li><a href="/admin/notifications">🔔Notifications</a></li>
+            <li><a href="/logout" class="logout-btn">🚪Logout</a></li>
+        </ul>
+    </nav>
+</header>
+<script>
+    const toggleBtn = document.querySelector('.admin-menu-toggle');
+    const sidebar = document.querySelector('.admin-header');
+
+    toggleBtn.addEventListener('click', function () {
+        sidebar.classList.toggle('open');
+    });
+</script>
+</body>
+</html>

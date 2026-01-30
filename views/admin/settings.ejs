@@ -1,0 +1,356 @@
+<%- include('../partials/adminHeader.ejs'); -%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* =========================
+   GLOBAL VARIABLES
+========================= */
+:root {
+  --navy: #001f4d;
+  --light-gray: #f2f2f2;
+  --white: #ffffff;
+  --border-gray: #dddddd;
+}
+
+/* =========================
+   BASE / MOBILE FIRST
+========================= */
+body {
+  margin: 0;
+  background: var(--light-gray);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.settings-page {
+  padding: 16px;
+}
+
+/* HEADER */
+.settings-page header {
+  margin-bottom: 20px;
+}
+
+.settings-page header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: var(--navy);
+}
+
+.settings-page header p {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* ALERTS */
+.error-message,
+.success-message {
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+.error-message {
+  background: #ffe5e5;
+  color: #900;
+}
+
+.success-message {
+  background: #e6f4ea;
+  color: #1e7e34;
+}
+
+/* FORMS */
+.settings-page form {
+  background: var(--white);
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-gray);
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+legend {
+  font-weight: bold;
+  color: var(--navy);
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border-gray);
+  font-size: 0.9rem;
+  background: var(--white);
+}
+
+textarea {
+  resize: vertical;
+}
+
+input[type="checkbox"] {
+  width: auto;
+  margin-right: 6px;
+}
+
+img {
+  margin-top: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-gray);
+}
+
+/* BUTTONS */
+button {
+  margin-top: 10px;
+  padding: 10px;
+  width: 100%;
+  border: none;
+  border-radius: 4px;
+  background: var(--navy);
+  color: var(--white);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* =========================
+   TABLET VIEW (≥ 768px)
+========================= */
+@media (min-width: 768px) {
+  .settings-page {
+    padding: 24px;
+  }
+
+  .settings-page header h1 {
+    font-size: 1.6rem;
+  }
+
+  .settings-page form {
+    padding: 18px;
+  }
+
+  label {
+    font-size: 0.95rem;
+  }
+
+  button {
+    width: auto;
+    padding: 10px 18px;
+  }
+}
+
+/* =========================
+   DESKTOP VIEW (≥ 1024px)
+   LEFT SIDEBAR PERMANENT
+========================= */
+@media (min-width: 1024px) {
+  .settings-page {
+    margin-left: 0px; /* space for permanent sidebar */
+    padding: 30px 40px;
+  }
+
+  .settings-page header {
+    margin-bottom: 30px;
+  }
+
+  .settings-page header h1 {
+    font-size: 1.8rem;
+  }
+
+  /* Two-column layout for forms */
+  .settings-page form {
+    max-width: 900px;
+  }
+
+  fieldset {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  legend {
+    grid-column: span 2;
+  }
+
+  /* Full-width sections */
+  fieldset label textarea,
+  fieldset label select,
+  fieldset label input[type="file"],
+  fieldset label input[type="password"] {
+    grid-column: span 2;
+  }
+
+  button {
+    grid-column: span 2;
+    width: fit-content;
+  }
+}
+
+    </style>
+</head>
+<body>
+    <div class="settings-page">
+
+  <!-- HEADER -->
+  <header>
+    <h1>Settings</h1>
+    <p>Configure your store, system preferences, and account details</p>
+  </header>
+
+  <!-- ERROR / SUCCESS MESSAGES -->
+  <% if (error) { %>
+    <p class="error-message"><%= error %></p>
+  <% } %>
+
+  <% if (typeof success !== 'undefined' && success) { %>
+    <p class="success-message"><%= success %></p>
+  <% } %>
+
+  <!-- STORE INFORMATION -->
+  <form action="/admin/settings/store" method="POST" enctype="multipart/form-data">
+    <fieldset>
+      <legend>Store Information</legend>
+
+      <label>
+        Store Name
+        <input type="text" name="storeName" value="<%= settings?.storeName || '' %>" required>
+      </label>
+
+      <label>
+        Address
+        <textarea name="storeAddress" rows="3"><%= settings?.storeAddress || '' %></textarea>
+      </label>
+
+      <label>
+        Contact Email
+        <input type="email" name="storeEmail" value="<%= settings?.storeEmail || '' %>">
+      </label>
+
+      <label>
+        Contact Phone
+        <input type="text" name="storePhone" value="<%= settings?.storePhone || '' %>">
+      </label>
+
+      <label>
+        Logo
+        <input type="file" name="storeLogo" accept="image/*">
+      </label>
+      <% if (settings?.storeLogo) { %>
+        <p>Current Logo: <img src="/uploads/<%= settings.storeLogo %>" alt="Store Logo" width="80"></p>
+      <% } %>
+
+      <button type="submit">💾 Save Store Info</button>
+    </fieldset>
+  </form>
+
+  <!-- TAX & CURRENCY -->
+  <form action="/admin/settings/tax" method="POST">
+    <fieldset>
+      <legend>Tax & Currency</legend>
+
+      <label>
+        Tax Rate (%)
+        <input type="number" name="taxRate" min="0" step="0.01" value="<%= settings?.taxRate || 0 %>">
+      </label>
+
+      <label>
+        Currency
+        <select name="currency">
+          <option value="Ksh" <%= settings?.currency === 'Ksh' ? 'selected' : '' %>>Ksh</option>
+          <option value="USD" <%= settings?.currency === 'USD' ? 'selected' : '' %>>USD</option>
+          <option value="EUR" <%= settings?.currency === 'EUR' ? 'selected' : '' %>>EUR</option>
+        </select>
+      </label>
+
+      <button type="submit">💾 Save Tax & Currency</button>
+    </fieldset>
+  </form>
+
+  <!-- NOTIFICATIONS -->
+  <form action="/admin/settings/notifications" method="POST">
+    <fieldset>
+      <legend>Notifications</legend>
+
+      <label>
+        <input type="checkbox" name="emailNotifications" <%= settings?.emailNotifications ? 'checked' : '' %>>
+        Enable Email Notifications for New Sales
+      </label>
+
+      <label>
+        <input type="checkbox" name="smsNotifications" <%= settings?.smsNotifications ? 'checked' : '' %>>
+        Enable SMS Alerts for Low Stock
+      </label>
+
+      <button type="submit">💾 Save Notification Settings</button>
+    </fieldset>
+  </form>
+
+  <!-- THEME -->
+  <form action="/admin/settings/theme" method="POST">
+    <fieldset>
+      <legend>Theme & Appearance</legend>
+
+      <label>
+        Dashboard Theme
+        <select name="theme">
+          <option value="light" <%= settings?.theme === 'light' ? 'selected' : '' %>>Light</option>
+          <option value="dark" <%= settings?.theme === 'dark' ? 'selected' : '' %>>Dark</option>
+        </select>
+      </label>
+
+      <button type="submit">💾 Save Theme</button>
+    </fieldset>
+  </form>
+
+  <!-- CHANGE PASSWORD -->
+  <form action="/admin/settings/password" method="POST">
+    <fieldset>
+      <legend>Change Password</legend>
+
+      <label>
+        Current Password
+        <input type="password" name="currentPassword" required>
+      </label>
+
+      <label>
+        New Password
+        <input type="password" name="newPassword" required>
+      </label>
+
+      <label>
+        Confirm New Password
+        <input type="password" name="confirmPassword" required>
+      </label>
+
+      <button type="submit">💾 Update Password</button>
+    </fieldset>
+  </form>
+
+</div>
+
+</body>
+</html>

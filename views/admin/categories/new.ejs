@@ -1,0 +1,238 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* ===========================
+   GLOBAL STYLES
+=========================== */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: #f5f5f5; /* light gray */
+  color: #001f4d; /* navy blue text */
+}
+
+a {
+  text-decoration: none;
+  color: #001f4d;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ===========================
+   PAGE WRAPPER
+=========================== */
+.category-create-page {
+  max-width: 480px; /* mobile width */
+  margin: 2rem auto;
+  padding: 1rem;
+  background-color: #fff; /* white card background */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* ===========================
+   HEADER
+=========================== */
+header h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.3rem;
+}
+
+header p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+header a {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #001f4d;
+  background-color: #e1e5f0; /* light gray button */
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  transition: background 0.3s;
+}
+
+header a:hover {
+  background-color: #d0d4e8;
+}
+
+/* ===========================
+   MESSAGES
+=========================== */
+.error-message,
+.success-message {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.error-message {
+  background-color: #ffcccc;
+  color: #a00;
+}
+
+.success-message {
+  background-color: #ccffcc;
+  color: #060;
+}
+
+/* ===========================
+   FORM
+=========================== */
+form fieldset {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+form legend {
+  font-weight: bold;
+  padding: 0 0.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* ===========================
+   FORM ACTIONS
+=========================== */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form-actions button {
+  background-color: #001f4d; /* navy */
+  color: #fff;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.form-actions button:hover {
+  background-color: #003366;
+}
+
+.form-actions a {
+  color: #001f4d;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background-color: #e1e5f0;
+  font-size: 0.9rem;
+  transition: background 0.3s;
+}
+
+.form-actions a:hover {
+  background-color: #d0d4e8;
+}
+
+/* ===========================
+   TABLET VIEW
+=========================== */
+@media (min-width: 600px) {
+  .category-create-page {
+    max-width: 600px;
+    padding: 2rem;
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+}
+
+/* ===========================
+   DESKTOP VIEW
+=========================== */
+@media (min-width: 992px) {
+  .category-create-page {
+    max-width: 700px;
+    padding: 2.5rem;
+  }
+
+  header h1 {
+    font-size: 2.2rem;
+  }
+}
+
+    </style>
+</head>
+<body>
+    <div class="category-create-page">
+
+  <!-- HEADER -->
+  <header>
+    <h1>Add New Category</h1>
+    <p>Fill in the details below to create a new product category</p>
+
+    <a href="/admin/categories">⬅ Back to Categories</a>
+  </header>
+
+  <!-- ERROR / SUCCESS MESSAGE -->
+  <% if (error) { %>
+    <p class="error-message"><%= error %></p>
+  <% } %>
+
+ <% if (typeof success !== 'undefined' && success) { %>
+  <p class="success-message"><%= success %></p>
+<% } %>
+
+  <!-- NEW CATEGORY FORM -->
+  <form action="/admin/categories" method="POST">
+
+    <!-- CATEGORY DETAILS -->
+    <fieldset>
+      <legend>Category Information</legend>
+
+      <label>
+        Category Name
+        <input type="text" name="name" placeholder="Enter category name" required>
+      </label>
+
+      <label>
+        Description (optional)
+        <textarea name="description" rows="4" placeholder="Enter category description"></textarea>
+      </label>
+    </fieldset>
+
+    <!-- ACTIONS -->
+    <div class="form-actions">
+      <button type="submit">💾 Save Category</button>
+      <a href="/admin/categories">Cancel</a>
+    </div>
+
+  </form>
+
+</div>
+</body>
+</html>

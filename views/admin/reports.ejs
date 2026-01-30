@@ -1,0 +1,442 @@
+<%- include('../partials/adminHeader.ejs'); -%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+   /* ========================
+   General Styles
+======================== */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: #f5f5f5; /* light gray */
+  color: #001f4d; /* navy blue text */
+}
+
+.reports-page-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========================
+   Sidebar (Left menu)
+======================== */
+.sidebar {
+  background-color: #001f4d;
+  color: #fff;
+  padding: 1rem;
+  width: 250px;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.sidebar a {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.sidebar a:hover {
+  color: #ffcc00;
+}
+
+/* ========================
+   Main content
+======================== */
+.main-content {
+  flex: 1;
+  padding: 1rem;
+  background-color: #f5f5f5;
+}
+
+/* ========================
+   Header
+======================== */
+.main-content header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.main-content header h1 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.main-content header p {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* ========================
+   Filters
+======================== */
+.reports-filters {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.reports-filters form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.reports-filters label {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+}
+
+.reports-filters input,
+.reports-filters select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 0.25rem;
+}
+
+.reports-filters button {
+  padding: 0.6rem;
+  background-color: #001f4d;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.reports-filters button:hover {
+  background-color: #003366;
+}
+
+/* ========================
+   Cards Container
+======================== */
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card span {
+  font-size: 1.5rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.card h3 {
+  margin: 0.25rem 0;
+  font-size: 1rem;
+  color: #001f4d;
+}
+
+.card p {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* ========================
+   Charts
+======================== */
+.charts-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.chart-box {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.chart-box h3 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* ========================
+   Tables
+======================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+thead {
+  background-color: #001f4d;
+  color: #fff;
+}
+
+th, td {
+  padding: 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid #ccc;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+
+tbody tr:hover {
+  background-color: #e0e0e0;
+}
+
+/* ========================
+   Responsive Layout
+======================== */
+@media (min-width: 768px) {
+  .reports-page-wrapper {
+    flex-direction: row;
+  }
+
+  .main-content {
+    padding: 2rem;
+  }
+
+  .cards-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .charts-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  table {
+    font-size: 0.95rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .cards-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .charts-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+    </style>
+</head>
+<body>
+    <div class="reports-page">
+
+  <!-- HEADER -->
+  <header>
+    <h1>Reports Dashboard</h1>
+    <p>View detailed insights on sales, inventory, and staff activity</p>
+  </header>
+
+  <!-- FILTERS -->
+  <section class="reports-filters">
+    <form method="GET" action="/admin/reports">
+      <label>
+        Date Range:
+        <input type="date" name="startDate">
+        <input type="date" name="endDate">
+      </label>
+
+      <label>
+        Cashier:
+        <select name="cashier">
+          <option value="">All Cashiers</option>
+          <% cashiers?.forEach(c => { %>
+            <option value="<%= c._id %>"><%= c.name %></option>
+          <% }) %>
+        </select>
+      </label>
+
+      <label>
+        Category:
+        <select name="category">
+          <option value="">All Categories</option>
+          <% categories?.forEach(cat => { %>
+            <option value="<%= cat._id %>"><%= cat.name %></option>
+          <% }) %>
+        </select>
+      </label>
+
+      <button type="submit">Filter</button>
+    </form>
+  </section>
+
+  <!-- QUICK STATS CARDS -->
+  <div class="cards-container">
+    <div class="card">
+      <span>💰</span>
+      <h3>Total Sales</h3>
+      <p><%= stats?.totalSales || 0 %> Ksh</p>
+    </div>
+    <div class="card">
+      <span>📊</span>
+      <h3>Total Revenue</h3>
+      <p><%= stats?.totalRevenue || 0 %> Ksh</p>
+    </div>
+    <div class="card">
+      <span>🧾</span>
+      <h3>Total Transactions</h3>
+      <p><%= stats?.totalTransactions || 0 %></p>
+    </div>
+    <div class="card">
+      <span>🏆</span>
+      <h3>Top Product</h3>
+      <p><%= stats?.topProduct || '-' %></p>
+    </div>
+    <div class="card">
+      <span>👤</span>
+      <h3>Top Cashier</h3>
+      <p><%= stats?.topCashier || '-' %></p>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="charts-container">
+    <div class="chart-box">
+      <h3>Sales Trend</h3>
+      <canvas id="salesTrendChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>Top-Selling Products</h3>
+      <canvas id="topProductsChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>Cashier Performance</h3>
+      <canvas id="cashierPerformanceChart"></canvas>
+    </div>
+  </div>
+
+  <!-- INVENTORY TABLE -->
+  <section class="inventory-table">
+    <h3>Inventory Status</h3>
+    <table border="1" cellpadding="8" cellspacing="0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Product</th>
+          <th>Category</th>
+          <th>Quantity</th>
+          <th>Min Stock</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (!inventory || inventory.length === 0) { %>
+          <tr>
+            <td colspan="6">No products found.</td>
+          </tr>
+        <% } %>
+
+        <% inventory?.forEach((item, index) => { %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= item.name %></td>
+            <td><%= item.category?.name || '-' %></td>
+            <td><%= item.quantity %></td>
+            <td><%= item.minStock %></td>
+            <td><%= item.quantity <= item.minStock ? 'Low Stock' : 'OK' %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- RECENT TRANSACTIONS TABLE -->
+  <section class="recent-transactions">
+    <h3>Recent Transactions</h3>
+    <table border="1" cellpadding="8" cellspacing="0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Invoice</th>
+          <th>Customer</th>
+          <th>Cashier</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Date / Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (!transactions || transactions.length === 0) { %>
+          <tr>
+            <td colspan="7">No transactions found.</td>
+          </tr>
+        <% } %>
+
+        <% transactions?.forEach((tx, index) => { %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= tx.invoice || '-' %></td>
+            <td><%= tx.customer || 'Walk-in' %></td>
+            <td><%= tx.cashier?.name || '-' %></td>
+            <td><%= tx.total || 0 %> Ksh</td>
+            <td><%= tx.status || '-' %></td>
+            <td><%= tx.createdAt ? new Date(tx.createdAt).toLocaleString() : '-' %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+<!-- CHART.JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const salesLabels = <%- JSON.stringify(stats?.salesTrend?.labels || []) %>;
+  const salesData = <%- JSON.stringify(stats?.salesTrend?.data || []) %>;
+  const topProductLabels = <%- JSON.stringify(stats?.topProducts?.labels || []) %>;
+  const topProductData = <%- JSON.stringify(stats?.topProducts?.data || []) %>;
+  const cashierLabels = <%- JSON.stringify(stats?.cashierPerformance?.labels || []) %>;
+  const cashierData = <%- JSON.stringify(stats?.cashierPerformance?.data || []) %>;
+</script>
+<script type="text/javascript">
+  // SALES TREND
+  const salesCtx = document.getElementById('salesTrendChart').getContext('2d');
+  new Chart(salesCtx, {
+    type: 'line',
+    data: { labels: salesLabels, datasets: [{ label: 'Sales', data: salesData, borderColor: '#001f4d', backgroundColor: 'rgba(0,31,77,0.2)', fill: true, tension: 0.3 }] },
+    options: { responsive: true }
+  });
+
+  // TOP PRODUCTS
+  const productsCtx = document.getElementById('topProductsChart').getContext('2d');
+  new Chart(productsCtx, {
+    type: 'bar',
+    data: { labels: topProductLabels, datasets: [{ label: 'Units Sold', data: topProductData, backgroundColor: '#001f4d' }] },
+    options: { responsive: true }
+  });
+
+  // CASHIER PERFORMANCE
+  const cashierCtx = document.getElementById('cashierPerformanceChart').getContext('2d');
+  new Chart(cashierCtx, {
+    type: 'bar',
+    data: { labels: cashierLabels, datasets: [{ label: 'Sales by Cashier', data: cashierData, backgroundColor: '#001f4d' }] },
+    options: { responsive: true }
+  });
+</script>
+
+</body>
+</html>

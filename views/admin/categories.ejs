@@ -1,0 +1,299 @@
+<%- include('../partials/adminHeader.ejs'); -%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* ==========================
+   GLOBAL
+========================== */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: #f4f4f4; /* light gray background */
+  color: #001f4d; /* navy blue text */
+}
+
+a {
+  text-decoration: none;
+  color: #001f4d;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* ==========================
+   PAGE WRAPPER
+========================== */
+.categories-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px;
+}
+
+/* ==========================
+   HEADER
+========================== */
+.categories-page header {
+  background-color: #001f4d; /* navy blue header */
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.categories-page header h1 {
+  margin: 0 0 5px 0;
+  font-size: 1.8rem;
+}
+
+.categories-page header p {
+  margin: 0 0 10px 0;
+  font-size: 0.95rem;
+  color: #d3d3d3; /* light gray subtitle */
+}
+
+.header-actions a {
+  background-color: white;
+  color: #001f4d;
+  padding: 6px 12px;
+  border-radius: 5px;
+  margin-top: 5px;
+  display: inline-block;
+  font-weight: bold;
+  transition: background 0.3s, color 0.3s;
+}
+
+.header-actions a:hover {
+  background-color: #d3d3d3;
+}
+
+/* ==========================
+   ERROR / SUCCESS
+========================== */
+.error-message {
+  color: #ff4d4f;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.success-message {
+  color: #28a745;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* ==========================
+   FILTERS / SEARCH
+========================== */
+.category-filters {
+  margin-bottom: 15px;
+}
+
+.category-filters form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.category-filters input,
+.category-filters button {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.category-filters button {
+  background-color: #001f4d;
+  color: white;
+  border: none;
+  font-weight: bold;
+}
+
+.category-filters button:hover {
+  background-color: #003366;
+}
+
+/* ==========================
+   CATEGORIES TABLE
+========================== */
+.categories-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.categories-table th, 
+.categories-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.categories-table th {
+  background-color: #001f4d;
+  color: white;
+}
+
+.categories-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.categories-table a,
+.categories-table button {
+  font-size: 0.9rem;
+}
+
+.categories-table button {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.categories-table button:hover {
+  background-color: #cc0000;
+}
+
+/* ==========================
+   MOBILE FIRST
+========================== */
+@media (max-width: 768px) {
+  .category-filters form {
+    flex-direction: column;
+  }
+
+  .categories-table table,
+  .categories-table thead,
+  .categories-table tbody,
+  .categories-table th,
+  .categories-table td,
+  .categories-table tr {
+    display: block;
+  }
+
+  .categories-table tr {
+    margin-bottom: 15px;
+    border-bottom: 2px solid #f4f4f4;
+  }
+
+  .categories-table td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+  }
+
+  .categories-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    font-weight: bold;
+    text-align: left;
+  }
+
+  .categories-table th {
+    display: none;
+  }
+}
+
+/* ==========================
+   DESKTOP VIEW
+========================== */
+@media (min-width: 769px) {
+  .categories-table table {
+    display: table;
+  }
+}
+
+    </style>
+</head>
+<body>
+    
+<!-- PAGE WRAPPER -->
+<div class="categories-page">
+
+  <!-- HEADER -->
+  <header>
+    <h1>Categories</h1>
+    <p>Manage your product categories</p>
+
+    <div class="header-actions">
+      <a href="/admin/categories/new">➕ Add New Category</a>
+    </div>
+  </header>
+
+  <!-- ERROR / SUCCESS MESSAGES -->
+  <% if (error) { %>
+    <p class="error-message"><%= error %></p>
+  <% } %>
+
+  <% if (success) { %>
+    <p class="success-message"><%= success %></p>
+  <% } %>
+
+  <!-- CATEGORY SEARCH / FILTER -->
+  <section class="category-filters">
+    <form method="GET" action="/admin/categories">
+      <input 
+        type="text" 
+        name="search" 
+        placeholder="Search categories by name"
+        value="<%= searchQuery || '' %>"
+      />
+      <button type="submit">Search</button>
+    </form>
+  </section>
+
+  <!-- CATEGORIES TABLE -->
+  <section class="categories-table">
+    <table border="1" cellpadding="8" cellspacing="0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Products Count</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (categories.length === 0) { %>
+          <tr>
+            <td colspan="5">No categories found.</td>
+          </tr>
+        <% } %>
+
+        <% categories.forEach((category, index) => { %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= category.name %></td>
+            <td><%= category.description || '-' %></td>
+            <td><%= category.productsCount || 0 %></td>
+            <td>
+              <a href="/admin/categories/<%= category._id %>/edit">✏️ Edit</a>
+              |
+              <form 
+                action="/admin/categories/<%= category._id %>?_method=DELETE" 
+                method="POST" 
+                style="display:inline"
+              >
+                <button type="submit">🗑 Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+</body>
+</html>
+
+

@@ -1,0 +1,412 @@
+<%- include('../partials/adminHeader.ejs'); -%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+/* ==========================
+   RESET & BASE
+========================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f5f5f5;
+  color: #001f4d;
+  line-height: 1.5;
+}
+
+/* ==========================
+   CONTAINER
+========================== */
+.sales-page {
+  max-width: 1300px;
+  margin: auto;
+  padding: 1rem;
+}
+
+/* ==========================
+   HEADER
+========================== */
+.sales-page header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.sales-page header h1 {
+  font-size: 1.8rem;
+  color: #001f4d;
+}
+
+.sales-page header p {
+  color: #555;
+}
+
+/* ==========================
+   CARDS
+========================== */
+.cards-container {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.2rem;
+  text-align: center;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card span {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: .4rem;
+}
+
+.card h3 {
+  font-size: .95rem;
+  margin-bottom: .3rem;
+}
+
+.card p {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* ==========================
+   CHARTS
+========================== */
+.charts-container {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.chart-box {
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #e5e5e5;
+}
+
+.chart-box h3 {
+  text-align: center;
+  margin-bottom: .6rem;
+}
+
+/* ==========================
+   FILTERS
+========================== */
+.sales-filters {
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+}
+
+.sales-filters label {
+  font-weight: bold;
+}
+
+.sales-filters input,
+.sales-filters select,
+.sales-filters button {
+  padding: .5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.sales-filters button {
+  background: #001f4d;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.sales-filters button:hover {
+  background: #003366;
+}
+
+/* ==========================
+   TABLE
+========================== */
+.recent-transactions {
+  overflow-x: auto;
+}
+
+.recent-transactions table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.recent-transactions th {
+  background: #001f4d;
+  color: white;
+}
+
+.recent-transactions th,
+.recent-transactions td {
+  padding: .7rem;
+  border-bottom: 1px solid #eee;
+}
+
+.recent-transactions tr:hover {
+  background: #f2f2f2;
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+@media (min-width:600px){
+  .cards-container{
+    grid-template-columns: repeat(2,1fr);
+  }
+  .charts-container{
+    grid-template-columns: 1fr 1fr;
+  }
+  .sales-filters{
+    flex-direction: row;
+    align-items: end;
+    gap: 1rem;
+  }
+}
+
+@media (min-width:992px){
+  .cards-container{
+    grid-template-columns: repeat(4,1fr);
+  }
+}
+
+@media (min-width:1200px){
+  .cards-container{
+    grid-template-columns: repeat(8,1fr);
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sales-page">
+
+<!-- HEADER -->
+<header>
+  <h1>Sales Dashboard</h1>
+  <p>Monitor sales performance and store activity</p>
+</header>
+
+<!-- ==========================
+     MAIN STATS CARDS
+========================== -->
+<div class="cards-container">
+
+  <div class="card">
+    <span>💰</span>
+    <h3>Total Sales Today</h3>
+    <p><%= stats?.totalSalesToday || 0 %> Ksh</p>
+  </div>
+
+  <div class="card">
+    <span>📊</span>
+    <h3>Revenue This Month</h3>
+    <p><%= stats?.totalRevenueMonth || 0 %> Ksh</p>
+  </div>
+
+  <div class="card">
+    <span>📈</span>
+    <h3>Profit Today</h3>
+    <p><%= stats?.profitToday || 0 %> Ksh</p>
+  </div>
+
+  <div class="card">
+    <span>🧾</span>
+    <h3>Total Transactions</h3>
+    <p><%= stats?.totalTransactions || 0 %></p>
+  </div>
+
+  <div class="card">
+    <span>💵</span>
+    <h3>Cash Today</h3>
+    <p><%= stats?.cashToday || 0 %> Ksh</p>
+  </div>
+
+  <div class="card">
+    <span>📱</span>
+    <h3>M-Pesa Today</h3>
+    <p><%= stats?.mpesaToday || 0 %> Ksh</p>
+  </div>
+
+  <div class="card">
+    <span>🏦</span>
+    <h3>Bank Today</h3>
+    <p><%= stats?.bankToday || 0 %> Ksh</p>
+  </div>
+
+  <div class="card">
+    <span>🏆</span>
+    <h3>Top Product</h3>
+    <p><%= stats?.topProduct || '-' %></p>
+  </div>
+
+</div>
+
+<!-- ==========================
+     CHARTS
+========================== -->
+<div class="charts-container">
+  <div class="chart-box">
+    <h3>Sales Trend</h3>
+    <canvas id="salesTrend"></canvas>
+  </div>
+
+  <div class="chart-box">
+    <h3>Top-Selling Products</h3>
+    <canvas id="topProducts"></canvas>
+  </div>
+</div>
+
+<!-- ==========================
+     FILTERS
+========================== -->
+<section class="sales-filters">
+<form method="GET" action="/admin/sales">
+
+<label>
+Date Range:
+<input type="date" name="startDate">
+<input type="date" name="endDate">
+</label>
+
+<label>
+Cashier:
+<select name="cashier">
+<option value="">All Cashiers</option>
+<% cashiers?.forEach(c => { %>
+<option value="<%= c._id %>"><%= c.username || c.name %></option>
+<% }) %>
+</select>
+</label>
+
+<button type="submit">Filter</button>
+
+</form>
+</section>
+
+<!-- ==========================
+     TRANSACTIONS TABLE
+========================== -->
+<section class="recent-transactions">
+
+<h3>Recent Transactions</h3>
+
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Invoice</th>
+<th>Customer</th>
+<th>Cashier</th>
+<th>Total</th>
+<th>Status</th>
+<th>Date</th>
+</tr>
+</thead>
+
+<tbody>
+
+<% if (!transactions || transactions.length === 0) { %>
+<tr>
+<td colspan="7">No transactions found</td>
+</tr>
+<% } %>
+
+<% transactions?.forEach((tx,index)=>{ %>
+<tr>
+<td><%= index + 1 %></td>
+<td><%= tx.invoice || '-' %></td>
+<td><%= tx.customer || 'Walk-in' %></td>
+<td><%= tx.cashier?.name || tx.cashier || '-' %></td>
+<td><%= tx.total || 0 %> Ksh</td>
+<td><%= tx.status || '-' %></td>
+<td><%= tx.createdAt ? new Date(tx.createdAt).toLocaleString() : '-' %></td>
+</tr>
+<% }) %>
+
+</tbody>
+</table>
+
+</section>
+
+</div>
+
+<!-- ==========================
+     CHART DATA
+========================== -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const salesLabels = <%- JSON.stringify(stats?.salesTrend?.labels || []) %>;
+const salesData = <%- JSON.stringify(stats?.salesTrend?.data || []) %>;
+const topProductLabels = <%- JSON.stringify(stats?.topProducts?.labels || []) %>;
+const topProductData = <%- JSON.stringify(stats?.topProducts?.data || []) %>;
+</script>
+
+<script>
+
+const salesCtx = document.getElementById('salesTrend').getContext('2d');
+
+new Chart(salesCtx,{
+type:'line',
+data:{
+labels:salesLabels,
+datasets:[{
+label:'Sales',
+data:salesData,
+borderColor:'#001f4d',
+backgroundColor:'rgba(0,31,77,0.2)',
+fill:true,
+tension:0.3
+}]
+}
+});
+
+const productsCtx = document.getElementById('topProducts').getContext('2d');
+
+new Chart(productsCtx,{
+type:'bar',
+data:{
+labels:topProductLabels,
+datasets:[{
+label:'Units Sold',
+data:topProductData,
+backgroundColor:'#001f4d'
+}]
+}
+});
+
+</script>
+
+</body>
+</html>

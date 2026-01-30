@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* ==========================
+   GLOBAL STYLES
+========================== */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5; /* light gray */
+  color: #001f4d; /* navy blue text */
+}
+
+a {
+  color: #001f4d;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* ==========================
+   CASHIER CREATE PAGE
+========================== */
+.cashier-create-page {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* ==========================
+   HEADER
+========================== */
+.cashier-create-page header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.cashier-create-page header h1 {
+  margin: 0 0 5px;
+  font-size: 1.8rem;
+  color: #001f4d;
+}
+
+.cashier-create-page header p {
+  margin: 0 0 10px;
+  color: #555; /* dark gray for description */
+}
+
+.cashier-create-page header a {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 6px 12px;
+  background-color: #001f4d;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* ==========================
+   ERROR / SUCCESS MESSAGES
+========================== */
+.error-message {
+  color: #ff4d4f;
+  background-color: #ffe5e5;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.success-message {
+  color: #155724;
+  background-color: #d4edda;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* ==========================
+   FORM
+========================== */
+.cashier-create-page form fieldset {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+}
+
+.cashier-create-page form legend {
+  font-weight: bold;
+  color: #001f4d;
+}
+
+.cashier-create-page form label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  color: #001f4d;
+}
+
+.cashier-create-page form input,
+.cashier-create-page form select,
+.cashier-create-page form textarea {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+/* ==========================
+   FORM ACTIONS
+========================== */
+.form-actions {
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.form-actions button {
+  background-color: #001f4d;
+  color: #fff;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+
+.form-actions button:hover {
+  background-color: #003366;
+}
+
+.form-actions a {
+  background-color: #ccc;
+  color: #001f4d;
+  padding: 10px 18px;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.form-actions a:hover {
+  background-color: #b3b3b3;
+}
+
+/* ==========================
+   RESPONSIVE: TABLET
+========================== */
+@media screen and (min-width: 600px) {
+  .cashier-create-page {
+    padding: 25px;
+  }
+
+  .form-actions {
+    justify-content: flex-start;
+  }
+}
+
+/* ==========================
+   RESPONSIVE: DESKTOP
+========================== */
+@media screen and (min-width: 992px) {
+  .cashier-create-page {
+    max-width: 800px;
+    margin: 40px auto;
+  }
+}
+
+    </style>
+</head>
+<body>
+    <div class="cashier-create-page">
+
+  <!-- HEADER -->
+  <header>
+    <h1>Add New Cashier</h1>
+    <p>Fill in the details below to create a cashier account</p>
+
+    <a href="/admin/cashiers">⬅ Back to Cashiers</a>
+  </header>
+
+  <!-- ERROR / SUCCESS MESSAGE -->
+  <% if (error) { %>
+    <p class="error-message"><%= error %></p>
+  <% } %>
+
+  <% if (typeof success !== 'undefined' && success) { %>
+    <p class="success-message"><%= success %></p>
+  <% } %>
+
+  <!-- NEW CASHIER FORM -->
+  <form action="/admin/cashiers" method="POST">
+
+    <!-- BASIC DETAILS -->
+    <fieldset>
+      <legend>Cashier Information</legend>
+
+      <label>
+        Full Name
+        <input type="text" name="name" placeholder="Enter full name" required>
+      </label>
+
+      <label>
+        Username
+        <input type="text" name="username" placeholder="Enter username" required>
+      </label>
+
+      <label>
+        Email (optional)
+        <input type="email" name="email" placeholder="Enter email address">
+      </label>
+
+      <label>
+        Password
+        <input type="password" name="password" placeholder="Enter password" required>
+      </label>
+
+      <label>
+        Status
+        <select name="isActive">
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+        </select>
+      </label>
+
+    </fieldset>
+
+    <!-- ACTIONS -->
+    <div class="form-actions">
+      <button type="submit">💾 Save Cashier</button>
+      <a href="/admin/cashiers">Cancel</a>
+    </div>
+
+  </form>
+
+</div>
+
+</body>
+</html>

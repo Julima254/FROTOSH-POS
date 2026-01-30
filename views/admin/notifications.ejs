@@ -1,0 +1,160 @@
+<%- include('../partials/adminHeader.ejs'); -%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root {
+  --navy: #0b1f3a;
+  --navy-light: #163a66;
+  --white: #ffffff;
+  --light-gray: #f2f4f7;
+  --border-gray: #dcdfe3;
+}
+
+/* PAGE WRAPPER */
+.notifications-page {
+  padding: 1rem;
+  background: var(--light-gray);
+  min-height: 100vh;
+  font-family: system-ui, sans-serif;
+}
+
+/* HEADER */
+.notifications-page header {
+  margin-bottom: 1.2rem;
+}
+.notifications-page header h1 { font-size: 1.5rem; color: var(--navy); }
+.notifications-page header p { color: #555; font-size: 0.95rem; }
+
+/* ACTION BAR */
+.notification-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+.notification-actions form button {
+  width: 100%;
+  padding: 0.65rem;
+  border: none;
+  border-radius: 6px;
+  background: var(--navy);
+  color: var(--white);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.notification-actions form button:hover { background: var(--navy-light); }
+
+/* NOTIFICATIONS LIST */
+.notifications-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.notification-item {
+  background: var(--white);
+  border-radius: 8px;
+  padding: 0.8rem;
+  display: flex;
+  gap: 0.75rem;
+  border: 1px solid var(--border-gray);
+}
+.notification-item.unread { border-left: 5px solid var(--navy); background: #eef3fb; }
+.notification-item.read { opacity: 0.8; }
+
+.notification-icon { font-size: 1.6rem; line-height: 1; }
+.notification-content h4 { font-size: 1rem; color: var(--navy); margin-bottom: 0.2rem; }
+.notification-content p { font-size: 0.9rem; color: #444; margin-bottom: 0.3rem; }
+.notification-content small { font-size: 0.75rem; color: #777; }
+
+.notification-item .notification-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+.notification-item .notification-actions button {
+  background: transparent;
+  border: 1px solid var(--navy);
+  color: var(--navy);
+  padding: 0.3rem 0.6rem;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+.notification-item .notification-actions button:hover {
+  background: var(--navy);
+  color: var(--white);
+}
+
+/* MEDIA QUERIES */
+@media(min-width: 768px) {
+  .notifications-page { padding: 1.5rem 2rem; }
+  .notification-actions { flex-direction: row; justify-content: flex-end; }
+  .notification-actions form button { width: auto; min-width: 180px; }
+  .notification-item { padding: 1rem; }
+  .notification-icon { font-size: 1.8rem; }
+}
+@media(min-width: 1024px) {
+  .notifications-page { margin-left: 0px; padding: 2rem 2.5rem; }
+  .notification-item { align-items: center; }
+}
+</style>
+</head>
+<body>
+<div class="notifications-page">
+
+  <!-- HEADER -->
+  <header>
+    <h1>Notifications</h1>
+    <p>System alerts, sales updates, and important activity</p>
+  </header>
+
+  <!-- ACTION BAR -->
+  <section class="notification-actions">
+    <form action="/admin/notifications/mark-all-read" method="POST">
+      <button type="submit">✔ Mark All as Read</button>
+    </form>
+    <form action="/admin/notifications/clear" method="POST" onsubmit="return confirm('Clear all notifications?')">
+      <button type="submit">🗑 Clear All</button>
+    </form>
+  </section>
+
+  <!-- NOTIFICATIONS LIST -->
+  <section class="notifications-list">
+
+    <% if (!notifications || notifications.length === 0) { %>
+      <p>No notifications available.</p>
+    <% } %>
+
+    <% notifications.forEach(n => { %>
+      <div class="notification-item <%= n.isRead ? 'read' : 'unread' %>">
+
+        <div class="notification-icon">
+          <% if(n.type==='sale') { %>💰<% } %>
+          <% if(n.type==='stock') { %>📦<% } %>
+          <% if(n.type==='cashier') { %>👤<% } %>
+          <% if(n.type==='security') { %>🔐<% } %>
+          <% if(!n.type) { %>🔔<% } %>
+        </div>
+
+        <div class="notification-content">
+          <h4><%= n.title %></h4>
+          <p><%= n.message %></p>
+          <small><%= n.createdAt ? new Date(n.createdAt).toLocaleString() : '' %></small>
+        </div>
+
+        <div class="notification-actions">
+          <% if (!n.isRead) { %>
+            <form action="/admin/notifications/<%= n._id %>/read" method="POST">
+              <button type="submit">Mark as Read</button>
+            </form>
+          <% } %>
+        </div>
+
+      </div>
+    <% }) %>
+
+  </section>
+
+</div>
+</body>
+</html>

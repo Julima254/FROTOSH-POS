@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ======================
+   RESET & GLOBAL
+====================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* ======================
+   BODY
+====================== */
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e6e6e6;
+}
+
+/* ======================
+   MAIN CONTAINER
+====================== */
+.login-container {
+  width: 90%;
+  max-width: 400px;
+  text-align: center; /* Everything centered */
+}
+
+/* ======================
+   FORM CARD
+====================== */
+.login-form {
+  background-color: rgba(255, 255, 255, 0.95); /* Semi-transparent white */
+  padding: 35px 25px;
+  border-radius: 12px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* ======================
+   LOGO (optional)
+====================== */
+.logo-container {
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 120px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* ======================
+   TITLE & SUBTITLE
+====================== */
+.login-title {
+  color: #001f4d; /* Navy Blue */
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.login-subtitle {
+  color: #666666; /* Light Gray */
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* ======================
+   ERROR MESSAGE
+====================== */
+.login-error {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* ======================
+   FORM INPUTS
+====================== */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #001f4d;
+  text-align: center; /* Center label above input */
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #cccccc;
+  font-size: 14px;
+  text-align: center; /* Text inside input centered */
+}
+
+/* ======================
+   LOGIN BUTTON
+====================== */
+.login-button {
+  width: 100%;
+  padding: 12px 0;
+  background-color: #001f4d; /* Navy Blue */
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #003366;
+}
+
+/* ======================
+   RESPONSIVE DESIGN
+====================== */
+@media (min-width: 600px) {
+  .login-title {
+    font-size: 32px;
+  }
+
+  .login-subtitle {
+    font-size: 16px;
+  }
+
+  .form-input {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 992px) {
+  .login-title {
+    font-size: 36px;
+  }
+
+  .form-input {
+    font-size: 16px;
+  }
+}
+
+</style>
+</head>
+<body>
+  <div class="login-container">
+
+  <div class="logo-container">
+    <img src="/images/logo1.png" alt="FROJOSH POS Logo" class="logo">
+  </div>
+
+  <h2 class="login-title">FROJOSH POS SYSTEM</h2>
+  <p class="login-subtitle">Please login to continue</p>
+
+  <% if (error && error.length > 0) { %>
+    <p class="login-error"><%= error[0] %></p>
+  <% } %>
+
+  <form action="/login" method="POST" class="login-form">
+
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" placeholder="Enter username" required autofocus class="form-input">
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter password" required class="form-input">
+    </div>
+
+    <button type="submit" class="login-button">Login</button>
+
+  </form>
+</div>
+</body>
+</html>

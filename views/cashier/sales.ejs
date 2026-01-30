@@ -1,0 +1,421 @@
+<%- include('../partials/cashierHeader.ejs'); -%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROJOSH POS SYSTEM</title>
+    <style>
+        /* ==============================
+   GENERAL RESET
+============================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  background-color: #f0f0f0;
+  color: #001f4d;
+  line-height: 1.5;
+}
+
+a {
+  text-decoration: none;
+  color: #001f4d;
+}
+
+h1, h3, h4 {
+  color: #001f4d;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* ==============================
+   DASHBOARD PAGE LAYOUT
+============================== */
+.cashier-dashboard-page {
+  padding: 16px;
+}
+
+/* ==============================
+   HEADER
+============================== */
+.cashier-dashboard-page header {
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.cashier-dashboard-page header p {
+  color: #333;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+/* ==============================
+   CARDS
+============================== */
+.cards-container {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.card span {
+  font-size: 2rem;
+}
+
+.card h3 {
+  margin-bottom: 4px;
+  font-size: 1rem;
+}
+
+.card p {
+  font-weight: bold;
+  color: #001f4d;
+}
+
+/* ==============================
+   QUICK ACTIONS
+============================== */
+.quick-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  justify-content: center;
+}
+
+.action-btn {
+  background-color: #001f4d;
+  color: #ffffff;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.action-btn:hover {
+  background-color: #003366;
+}
+
+/* ==============================
+   TABLES
+============================== */
+.recent-transactions table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.recent-transactions th,
+.recent-transactions td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.recent-transactions th {
+  background-color: #001f4d;
+  color: #ffffff;
+}
+
+.recent-transactions tr:hover {
+  background-color: #f0f0f0;
+}
+
+/* ==============================
+   NOTIFICATIONS
+============================== */
+.dashboard-notifications {
+  margin-bottom: 16px;
+}
+
+.notification-item {
+  background-color: #ffffff;
+  border-left: 4px solid #001f4d;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  display: flex;
+  gap: 8px;
+  border-radius: 6px;
+}
+
+.notification-item.unread {
+  background-color: #e6f0ff;
+}
+
+.notification-item .icon {
+  font-size: 1.5rem;
+}
+
+.notification-item .content h4 {
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.notification-item .content p {
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.notification-item .content small {
+  font-size: 0.7rem;
+  color: #555;
+}
+
+/* ==============================
+   CHARTS
+============================== */
+.dashboard-charts {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.chart-box {
+  background-color: #ffffff;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+/* ==============================
+   RESPONSIVE LAYOUT
+============================== */
+
+/* --- Mobile (default) --- */
+.cards-container {
+  grid-template-columns: 1fr;
+}
+
+.dashboard-charts {
+  grid-template-columns: 1fr;
+}
+
+/* --- Tablet --- */
+@media (min-width: 600px) {
+  .cards-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-charts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* --- Desktop --- */
+@media (min-width: 1024px) {
+  .cashier-dashboard-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  /* Top navigation instead of stacked for desktop */
+  .cashier-dashboard-page header {
+    text-align: left;
+  }
+
+  .cards-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .dashboard-charts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+    </style>
+</head>
+<body>
+    <div class="cashier-dashboard-page">
+
+  <!-- HEADER -->
+  <header>
+    <h1>Cashier Dashboard</h1>
+    <p>Monitor today's sales, recent transactions, and important alerts</p>
+  </header>
+
+  <!-- QUICK STATS CARDS -->
+  <div class="cards-container">
+    <div class="card">
+      <span>💰</span>
+      <h3>Total Sales Today</h3>
+      <p><span id="totalSalesToday"><%= stats?.totalSalesToday || 0 %></span> Ksh</p>
+
+    </div>
+    <div class="card">
+      <span>🧾</span>
+      <h3>Total Transactions Today</h3>
+      <p id="totalTransactionsToday"><%= stats?.totalTransactionsToday || 0 %></p>
+
+    </div>
+    <div class="card">
+      <span>📦</span>
+      <h3>Low Stock Items</h3>
+      <p><%= stats?.lowStockCount || 0 %></p>
+    </div>
+    <div class="card">
+      <span>🏆</span>
+      <h3>Top Product Today</h3>
+      <p><%= stats?.topProduct || '-' %></p>
+    </div>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <section class="quick-actions">
+    <a href="/cashier/pos" class="action-btn">🧾 Start POS</a>
+    <a href="/cashier/transactions" class="action-btn">🗂️ View Transactions</a>
+    <a href="/cashier/products" class="action-btn">📦 Check Inventory</a>
+  </section>
+
+  <!-- RECENT TRANSACTIONS TABLE -->
+  <section class="recent-transactions">
+    <h3>Recent Transactions</h3>
+    <table border="1" cellpadding="8" cellspacing="0">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Invoice</th>
+          <th>Customer</th>
+          <th>Products</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Date / Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (!recentTransactions || recentTransactions.length === 0) { %>
+          <tr>
+            <td colspan="7">No transactions found.</td>
+          </tr>
+        <% } %>
+
+        <% recentTransactions?.forEach((tx, index) => { %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= tx.invoice || '-' %></td>
+            <td><%= tx.customer || 'Walk-in' %></td>
+            <td>
+              <% if (tx.products && tx.products.length > 0) { %>
+                <%= tx.products.map(p => p.name).join(', ') %>
+              <% } else { %>
+                -
+              <% } %>
+            </td>
+            <td><%= tx.total || 0 %> Ksh</td>
+            <td><%= tx.status || '-' %></td>
+            <td><%= tx.createdAt ? new Date(tx.createdAt).toLocaleString() : '-' %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- NOTIFICATIONS PREVIEW -->
+  <section class="dashboard-notifications">
+    <h3>Recent Notifications</h3>
+    <% if (!notifications || notifications.length === 0) { %>
+      <p>No notifications.</p>
+    <% } %>
+
+    <% notifications?.slice(0,5).forEach(notification => { %>
+      <div class="notification-item <%= notification.isRead ? 'read' : 'unread' %>">
+        <span class="icon">
+          <% if (notification.type === 'sale') { %> 💰 <% } %>
+          <% if (notification.type === 'stock') { %> 📦 <% } %>
+          <% if (notification.type === 'system') { %> ⚙️ <% } %>
+        </span>
+        <div class="content">
+          <h4><%= notification.title %></h4>
+          <p><%= notification.message %></p>
+          <small><%= notification.createdAt ? new Date(notification.createdAt).toLocaleString() : '' %></small>
+        </div>
+      </div>
+    <% }) %>
+  </section>
+
+  <!-- CHARTS PLACEHOLDER -->
+  <section class="dashboard-charts">
+    <div class="chart-box">
+      <h3>Sales Trend Today</h3>
+      <canvas id="salesTrendChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>Top Products</h3>
+      <canvas id="topProductsChart"></canvas>
+    </div>
+  </section>
+
+</div>
+
+<!-- CHART.JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const salesLabels = <%- JSON.stringify(stats?.salesTrend?.labels || []) %>;
+  const salesData = <%- JSON.stringify(stats?.salesTrend?.data || []) %>;
+  const topProductLabels = <%- JSON.stringify(stats?.topProducts?.labels || []) %>;
+  const topProductData = <%- JSON.stringify(stats?.topProducts?.data || []) %>;
+</script>
+
+<script>
+  const salesCtx = document.getElementById('salesTrendChart')?.getContext('2d');
+  if (salesCtx) {
+    new Chart(salesCtx, {
+      type: 'line',
+      data: { labels: salesLabels, datasets: [{ label: 'Sales', data: salesData, borderColor: '#001f4d', backgroundColor: 'rgba(0,31,77,0.2)', fill: true, tension: 0.3 }] },
+      options: { responsive: true }
+    });
+  }
+
+  const productsCtx = document.getElementById('topProductsChart')?.getContext('2d');
+  if (productsCtx) {
+    new Chart(productsCtx, {
+      type: 'bar',
+      data: { labels: topProductLabels, datasets: [{ label: 'Units Sold', data: topProductData, backgroundColor: '#001f4d' }] },
+      options: { responsive: true }
+    });
+  }
+</script>
+
+<script>
+async function refreshStats() {
+  try {
+    const res = await fetch("/cashier/stats/live");
+    const data = await res.json();
+
+    document.getElementById("totalSalesToday").innerText = data.totalSalesToday;
+    document.getElementById("totalTransactionsToday").innerText = data.totalTransactionsToday;
+
+  } catch (err) {
+    console.error("Stats refresh failed", err);
+  }
+}
+
+// Refresh every 5 seconds
+setInterval(refreshStats, 5000);
+
+// Also refresh once on page load
+refreshStats();
+</script>
+
+
+</body>
+</html>

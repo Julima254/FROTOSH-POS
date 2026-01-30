@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* ===========================
+   BASE / MOBILE STYLES
+=========================== */
+.cashier-edit-page {
+  max-width: 480px;
+  margin: 20px auto;
+  padding: 15px;
+  background-color: #f5f5f5; /* light gray background */
+  border-radius: 10px;
+  font-family: Arial, sans-serif;
+  color: #001f4d; /* navyblue text */
+}
+
+.cashier-edit-page header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.cashier-edit-page header h1 {
+  font-size: 1.8rem;
+  margin-bottom: 5px;
+  color: #001f4d;
+}
+
+.cashier-edit-page header p {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.cashier-edit-page header a {
+  display: inline-block;
+  margin-top: 10px;
+  text-decoration: none;
+  color: #001f4d;
+  font-weight: bold;
+}
+
+.cashier-edit-page .error-message {
+  color: #ff4d4d; /* red */
+  background-color: #ffe5e5;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.cashier-edit-page .success-message {
+  color: #006600; /* dark green */
+  background-color: #e6ffe6;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.cashier-edit-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.cashier-edit-page fieldset {
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #ffffff; /* white */
+}
+
+.cashier-edit-page legend {
+  font-weight: bold;
+  padding: 0 5px;
+}
+
+.cashier-edit-page label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.cashier-edit-page input,
+.cashier-edit-page select {
+  padding: 8px 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+  font-size: 0.9rem;
+}
+
+.cashier-edit-page input[type="password"]::placeholder {
+  color: #999;
+}
+
+.cashier-edit-page .form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.cashier-edit-page .form-actions button {
+  background-color: #001f4d;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.cashier-edit-page .form-actions button:hover {
+  background-color: #003366;
+}
+
+.cashier-edit-page .form-actions a {
+  text-decoration: none;
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #ddd;
+  color: #001f4d;
+  font-weight: bold;
+}
+
+/* ===========================
+   TABLET STYLES (min-width: 600px)
+=========================== */
+@media (min-width: 600px) {
+  .cashier-edit-page {
+    max-width: 700px;
+    padding: 20px;
+  }
+
+  .cashier-edit-page form {
+    gap: 20px;
+  }
+
+  .cashier-edit-page input,
+  .cashier-edit-page select {
+    font-size: 1rem;
+    padding: 10px;
+  }
+
+  .cashier-edit-page .form-actions {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .cashier-edit-page .form-actions a {
+    padding: 10px 15px;
+  }
+}
+
+/* ===========================
+   DESKTOP STYLES (min-width: 1024px)
+=========================== */
+@media (min-width: 1024px) {
+  .cashier-edit-page {
+    max-width: 900px;
+    padding: 25px;
+  }
+
+  .cashier-edit-page form {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .cashier-edit-page fieldset {
+    flex: 1 1 48%;
+  }
+
+  .cashier-edit-page .form-actions {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .cashier-edit-page .form-actions button,
+  .cashier-edit-page .form-actions a {
+    width: auto;
+  }
+}
+
+    </style>
+</head>
+<body>
+    <div class="cashier-edit-page">
+
+  <!-- HEADER -->
+  <header>
+    <h1>Edit Cashier</h1>
+    <p>Update details for this cashier account</p>
+
+    <a href="/admin/cashiers">⬅ Back to Cashiers</a>
+  </header>
+
+  <!-- ERROR / SUCCESS MESSAGE -->
+  <% if (error) { %>
+    <p class="error-message"><%= error %></p>
+  <% } %>
+
+  <% if (typeof success !== 'undefined' && success) { %>
+    <p class="success-message"><%= success %></p>
+  <% } %>
+
+  <!-- EDIT CASHIER FORM -->
+  <form action="/admin/cashiers/<%= cashier._id %>?_method=PUT" method="POST">
+
+    <!-- BASIC DETAILS -->
+    <fieldset>
+      <legend>Cashier Information</legend>
+
+      <label>
+        Full Name
+        <input type="text" name="name" value="<%= cashier.name %>" required>
+      </label>
+
+      <label>
+        Username
+        <input type="text" name="username" value="<%= cashier.username %>" required>
+      </label>
+
+      <label>
+        Email (optional)
+        <input type="email" name="email" value="<%= cashier.email || '' %>">
+      </label>
+
+      <label>
+        Password (leave blank to keep current password)
+        <input type="password" name="password" placeholder="Enter new password">
+      </label>
+
+      <label>
+        Status
+        <select name="isActive">
+          <option value="true" <%= cashier.isActive ? 'selected' : '' %>>Active</option>
+          <option value="false" <%= !cashier.isActive ? 'selected' : '' %>>Inactive</option>
+        </select>
+      </label>
+
+    </fieldset>
+
+    <!-- ACTIONS -->
+    <div class="form-actions">
+      <button type="submit">💾 Update Cashier</button>
+      <a href="/admin/cashiers">Cancel</a>
+    </div>
+
+  </form>
+
+</div>
+
+</body>
+</html>
