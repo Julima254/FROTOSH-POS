@@ -183,6 +183,30 @@ router.post('/pos/complete', isCashier, async (req, res) => {
     });
 
     await transaction.save();
+//reduction code
+    for (const item of transactionItems) {
+ const productId = item.product._id || item.product;
+const product = await Product.findById(productId);
+
+
+  if (!product) {
+    return res.status(404).json({
+      success: false,
+      message: "Product not found"
+    });
+  }
+
+  if (product.quantity < item.quantity) {
+    return res.status(400).json({
+      success: false,
+      message: `Insufficient stock for ${product.name}`
+    });
+  }
+
+  product.quantity -= item.quantity;
+  await product.save();
+}
+
 
     const populatedTransaction = await Transaction.findById(transaction._id).populate("items.product");
 
