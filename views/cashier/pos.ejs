@@ -1,0 +1,285 @@
+<%- include('../partials/cashierHeader.ejs'); -%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* ===================== VARIABLES ===================== */
+        :root {
+            --navy: #0a1f44;
+            --white: #ffffff;
+            --lightgray: #f3f4f6;
+            --border: #e5e7eb;
+            --success: #16a34a;
+            --danger: #dc2626;
+        }
+
+        /* Override price input */
+.override-price {
+  width: 70px;
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+
+        body { padding-top: 70px; }
+
+        /* ===================== GLOBAL ===================== */
+        .pos-page { background: var(--lightgray); min-height: 100vh; padding: 15px; font-family: "Segoe UI", Arial, sans-serif; }
+
+        /* ===================== HEADER ===================== */
+        .pos-header { background: var(--navy); color: var(--white); padding: 18px; border-radius: 10px; margin-bottom: 15px; }
+        .pos-header h1 { margin: 0; font-size: 22px; }
+        .pos-header p { margin-top: 5px; font-size: 14px; opacity: 0.9; }
+
+        /* ===================== CONTAINER ===================== */
+        .pos-container { display: flex; flex-direction: column; gap: 15px; }
+
+        /* ===================== PRODUCTS SIDE ===================== */
+        .pos-products { background: var(--white); padding: 15px; border-radius: 10px; }
+        .pos-search input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 15px; font-size: 15px; }
+        .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .product-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 10px; cursor: pointer; transition: 0.2s; text-align: center; }
+        .product-card:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.08); }
+        .product-image { height: 90px; margin-bottom: 8px; }
+        .product-image img { width: 100%; height: 100%; object-fit: contain; }
+        .product-card h4 { margin: 6px 0; font-size: 14px; }
+        .product-card p { font-weight: bold; color: var(--navy); margin: 4px 0; }
+        .product-card small { color: #666; }
+
+        /* ===================== CART SIDE ===================== */
+        .pos-cart { background: var(--white); padding: 15px; border-radius: 10px; }
+        .pos-cart h3 { margin-bottom: 15px; }
+        .cart-items { max-height: 220px; overflow-y: auto; margin-bottom: 15px; }
+        .cart-item { display: flex; justify-content: space-between; background: var(--lightgray); padding: 10px; border-radius: 8px; margin-bottom: 8px; }
+        .cart-item input { width: 60px; padding: 5px; border-radius: 6px; border: 1px solid var(--border); }
+        .cart-item button { background: var(--danger); border: none; color: white; padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+        .cart-summary { background: var(--lightgray); padding: 12px; border-radius: 8px; margin-bottom: 15px; }
+        .cart-summary h3 { color: var(--navy); }
+
+        /* ===================== PAYMENT ===================== */
+        .payment-section label { display: block; margin-top: 10px; font-weight: 600; }
+        .payment-section select, .payment-section input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); margin-top: 5px; }
+        .pos-buttons { display: flex; gap: 10px; margin-top: 15px; }
+        .pos-buttons button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .pos-buttons button:first-child { background: var(--success); color: white; }
+        .pos-buttons button:last-child { background: var(--danger); color: white; }
+
+        /* ===================== RECEIPT MODAL ===================== */
+        .receipt-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .receipt-content { background: white; padding: 20px; border-radius: 10px; width: 95%; max-width: 350px; text-align: center; }
+        .receipt-content button { margin-top: 10px; padding: 10px; border: none; border-radius: 6px; cursor: pointer; background: var(--navy); color: white; }
+
+        @media (min-width: 768px) { .products-grid { grid-template-columns: repeat(3, 1fr); } .cart-items { max-height: 300px; } }
+        @media (min-width: 1024px) { .pos-container { flex-direction: row; align-items: flex-start; } .pos-products { flex: 2; } .pos-cart { flex: 1; position: sticky; top: 20px; height: fit-content; } .products-grid { grid-template-columns: repeat(4, 1fr); } }
+    </style>
+</head>
+<body>
+<div class="pos-page">
+
+  <!-- HEADER -->
+  <header class="pos-header">
+    <h1>POS System</h1>
+    <p>Process sales and generate receipts</p>
+  </header>
+
+  <div class="pos-container">
+
+    <!-- PRODUCTS -->
+    <section class="pos-products">
+      <div class="pos-search">
+        <input type="text" id="productSearch" placeholder="Search product by name or SKU...">
+      </div>
+      <div class="products-grid" id="productsGrid">
+        <% products.forEach(product => { %>
+          <div class="product-card" data-product='<%- JSON.stringify(product) %>'>
+            <div class="product-image">
+              <% if (product.image) { %>
+                <img src="<%= product.image %>" alt="<%= product.name %>">
+              <% } else { %>
+                <img src="/images/no-image.png" alt="No Image">
+              <% } %>
+            </div>
+            <h4><%= product.name %></h4>
+            <p>Ksh <%= product.sellingPrice %></p>
+            <small>Stock: <%= product.quantity %></small>
+          </div>
+        <% }) %>
+      </div>
+    </section>
+
+    <!-- CART & PAYMENT -->
+    <section class="pos-cart">
+      <h3>🧾 Current Sale</h3>
+      <div id="cartItems" class="cart-items"></div>
+
+      <div class="cart-summary">
+        <p>Subtotal: Ksh <span id="subtotal">0</span></p>
+        <p>Tax (0%): Ksh <span id="tax">0</span></p>
+        <h3>Total: Ksh <span id="total">0</span></h3>
+      </div>
+
+      <div class="payment-section">
+        <label>Payment Method</label>
+        <select id="paymentMethod">
+          <option value="cash">Cash</option>
+          <option value="mpesa">M-Pesa</option>
+          <option value="bank">Bank</option>
+        </select>
+
+        <label>Amount Received</label>
+        <input type="number" id="amountReceived" placeholder="Enter amount received" oninput="calculateChange()">
+
+        <p>Change: Ksh <span id="change">0</span></p>
+
+        <div class="pos-buttons">
+          <button onclick="completeSale()">✅ Complete Sale</button>
+          <button onclick="clearCart()">🧹 Clear Cart</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- RECEIPT MODAL -->
+  <div id="receiptModal" class="receipt-modal" style="display:none;">
+    <div class="receipt-content">
+      <h2>Receipt</h2>
+      <p>Date: <span id="receiptDate"></span></p>
+      <div id="receiptItems"></div>
+      <hr>
+      <h3>Total: Ksh <span id="receiptTotal"></span></h3>
+      <p>Payment Method: <span id="receiptPayment"></span></p>
+      <button onclick="printReceipt()">🖨 Print</button>
+      <button onclick="closeReceipt()">Close</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let cart = [];
+
+document.querySelectorAll(".product-card").forEach(card => {
+  card.addEventListener("click", () => {
+    const product = JSON.parse(card.dataset.product);
+    addToCart(product);
+  });
+});
+
+function addToCart(product) {
+  const existing = cart.find(item => item._id === product._id);
+  if (existing) existing.qty++;
+  else cart.push({ ...product, qty: 1, overridePrice: null });
+  renderCart();
+}
+
+function renderCart() {
+  const container = document.getElementById("cartItems");
+  container.innerHTML = "";
+  let subtotal = 0;
+  cart.forEach(item => {
+   const priceToUse = item.overridePrice || item.sellingPrice;
+subtotal += item.qty * priceToUse;
+
+    container.innerHTML += `
+      <div class="cart-item">
+        <div>
+          <strong>${item.name}</strong>
+          <p>Ksh ${item.overridePrice || item.sellingPrice}</p>
+
+<input 
+  class="override-price"
+  type="number"
+  placeholder="Override"
+  value="${item.overridePrice || ''}"
+  onchange="updateOverridePrice('${item._id}', this.value)"
+>
+
+        </div>
+        <div>
+          <input type="number" min="1" value="${item.qty}" onchange="updateQty('${item._id}', this.value)">
+          <button onclick="removeItem('${item._id}')">❌</button>
+        </div>
+      </div>
+    `;
+  });
+  document.getElementById("subtotal").innerText = subtotal;
+  document.getElementById("tax").innerText = 0;
+  document.getElementById("total").innerText = subtotal;
+}
+
+function updateQty(id, qty) {
+  const item = cart.find(i => i._id === id);
+  if (item) item.qty = Number(qty);
+  renderCart();
+}
+
+function updateOverridePrice(id, price) {
+  const item = cart.find(i => i._id === id);
+  if (item) {
+    item.overridePrice = price ? Number(price) : null;
+  }
+  renderCart();
+}
+
+
+function removeItem(id) { cart = cart.filter(i => i._id !== id); renderCart(); }
+function clearCart() { cart = []; renderCart(); }
+function closeReceipt() { document.getElementById("receiptModal").style.display = "none"; }
+function printReceipt() { window.print(); }
+
+function calculateChange() {
+  const total = Number(document.getElementById("total").innerText);
+  const received = Number(document.getElementById("amountReceived").value || 0);
+  document.getElementById("change").innerText = received - total;
+}
+
+function completeSale() {
+  if (cart.length === 0) { alert("Cart is empty"); return; }
+
+  const paymentMethod = document.getElementById("paymentMethod").value;
+  const amountReceived = Number(document.getElementById("amountReceived").value || 0);
+
+  const minimalCart = cart.map(item => ({
+    product: item._id,
+    quantity: item.qty,
+    sellingPrice: Number(item.overridePrice || item.sellingPrice),
+
+    costPrice: Number(item.costPrice || 0) // make sure costPrice is sent
+  }));
+
+  fetch("/cashier/pos/complete", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ cart: minimalCart, paymentMethod, amountReceived })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showReceipt(data.transaction);
+      cart = [];
+      renderCart();
+      alert("Sale completed successfully!");
+    } else alert("Failed to complete sale: " + data.message);
+  })
+  .catch(err => { console.error(err); alert("Server error"); });
+}
+
+function showReceipt(transaction) {
+  const receiptItems = document.getElementById("receiptItems");
+  receiptItems.innerHTML = "";
+  transaction.items.forEach(item => {
+    receiptItems.innerHTML += `<p>${item.product.name} x ${item.quantity} = Ksh ${item.totalAmount}</p>`;
+  });
+  document.getElementById("receiptTotal").innerText = transaction.totalAmount;
+  document.getElementById("receiptPayment").innerText = transaction.paymentMethod;
+  document.getElementById("receiptDate").innerText = new Date().toLocaleString();
+  document.getElementById("receiptModal").style.display = "block";
+}
+</script>
+</body>
+</html> 
